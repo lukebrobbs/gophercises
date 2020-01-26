@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
+	"time"
 )
 
 func handleErr(e error) {
@@ -17,10 +19,10 @@ func handleErr(e error) {
 
 func handleInput(item []string) bool {
 	fmt.Print(item[0] + ": ")
+
 	var input string
 	_, err := fmt.Scanln(&input)
 	handleErr(err)
-
 	if input != item[1] {
 		return false
 	}
@@ -29,10 +31,11 @@ func handleInput(item []string) bool {
 
 func main() {
 
-	wordPtr := flag.String("f", "./problems.csv", "file path for csv file")
+	csvFile := flag.String("f", "./problems.csv", "file path for csv file")
+	timeout := flag.Int("t", 30, "Amount of time allowed to complete the quiz")
 	flag.Parse()
 
-	dat, err := ioutil.ReadFile(*wordPtr)
+	dat, err := ioutil.ReadFile(*csvFile)
 	handleErr(err)
 
 	r := csv.NewReader(strings.NewReader(string(dat)))
@@ -40,11 +43,17 @@ func main() {
 	handleErr(err)
 
 	var score int
+	timer := time.NewTimer(time.Duration(*timeout) * time.Second)
 
-	for _, item := range records {
+	for index, item := range records {
+		go func() {
+			<-timer.C
+			fmt.Printf("out of time, you answered %d questions out of %d, and got %d correct\n", index, len(records), score)
+			os.Exit(1)
+		}()
 		if handleInput(item) == true {
 			score++
 		}
 	}
-	fmt.Printf("you got %v out of %v correct! \n", score, len(records))
+	fmt.Printf("you got %d out of %d correct! \n", score, len(records))
 }
