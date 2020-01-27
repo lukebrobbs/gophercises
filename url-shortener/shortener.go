@@ -1,21 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+
+	urlshort "github.com/lukebrobbs/gophercises/url-shortener/urlShort"
 )
 
-func sayHello(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello"))
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	if r.RequestURI == "/redirect" {
-		http.Redirect(w, r, "/hello", 301)
-	}
-}
-
 func main() {
-	http.HandleFunc("/hello", sayHello)
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	pathsToUrls := map[string]string{
+		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
+		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
+	}
+	mapHandler := urlshort.MapHandler(pathsToUrls, http.NewServeMux())
+	fmt.Println("Listening on port 8080")
+	http.ListenAndServe(":8080", mapHandler)
 }
