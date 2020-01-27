@@ -32,7 +32,7 @@ func handleInput(item []string) bool {
 func main() {
 
 	csvFile := flag.String("f", "./problems.csv", "file path for csv file")
-	timeout := flag.Int("t", 30, "Amount of time allowed to complete the quiz")
+	timeout := flag.Int("t", 30, "Amount of time(in seconds) allowed to complete the quiz")
 	flag.Parse()
 
 	dat, err := ioutil.ReadFile(*csvFile)
