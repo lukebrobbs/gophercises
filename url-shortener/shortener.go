@@ -7,6 +7,13 @@ import (
 	urlshort "github.com/lukebrobbs/gophercises/url-shortener/urlShort"
 )
 
+func logger(h http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf(" %v called\n", r.RequestURI)
+		h.ServeHTTP(w, r)
+	}
+}
+
 func main() {
 	pathsToUrls := map[string]string{
 		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
@@ -24,5 +31,5 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Listening on port 8080")
-	http.ListenAndServe(":8080", yamlHandler)
+	http.ListenAndServe(":8080", logger(yamlHandler))
 }
