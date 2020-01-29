@@ -1,0 +1,9 @@
+<h1>{{.Title}}</h1>
+
+<div>
+  {{range $val := .Body}}
+  <p value="{{$val}}">{{$val}}</p>
+  {{end}} {{range $option := .Options}}
+  <a href="{{$option.Arc}}" value="{{$option.Text}}">{{$option.Text}}</a>
+  {{end}}
+</div>
